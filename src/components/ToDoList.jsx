@@ -1,34 +1,107 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import AddToDo from './AddToDo'
 import ToDo from './ToDo'
 import styles from './Todos.module.css'
+import {
+	useRequestGetTodos,
+	useRequestAddTodos,
+	useRequestDeleteTodos,
+	useRequestUpdateTodos,
+} from '../hooks.js'
+import SearchToDo from './SearchTodo'
 
 const ToDoList = () => {
-	const [todos, setTodos] = useState([])
-	const [isLoading, setIsLoading] = useState(false)
+	const [refreshTodos, setRefreshTodos] = useState(false)
+	const [newTodos, setCreateNewTodos] = useState('')
+	const [searchQuery, setSearchQuery] = useState('')
+	const [isSorted, setIsSorted] = useState(false)
 
-	useEffect(() => {
-		setIsLoading(true)
+	const { todos, isLoading } = useRequestGetTodos(refreshTodos)
 
-		setTimeout(() => {
-			fetch('https://jsonplaceholder.typicode.com/todos')
-				.then(loadedData => loadedData.json())
-				.then(loadedTodos => {
-					setTodos(loadedTodos)
-				})
-				.finally(() => setIsLoading(false))
-		}, 2000)
-	}, [])
+	const { requestAddTodos, isCreating } = useRequestAddTodos(
+		refreshTodos,
+		setRefreshTodos
+	)
+
+	const { requestDeleteTodos, isDeleting } = useRequestDeleteTodos(
+		refreshTodos,
+		setRefreshTodos
+	)
+
+	const { requestUpdateTodos, isUpdating } = useRequestUpdateTodos(
+		refreshTodos,
+		setRefreshTodos
+	)
+
+	const onSubmit = event => {
+		event.preventDefault()
+
+		if (!newTodos) {
+			return
+		}
+
+		sendFormData(newTodos)
+		setCreateNewTodos('')
+	}
+
+	const sendFormData = formData => {
+		requestAddTodos(formData)
+	}
+
+	const onNewTodosChange = ({ target }) => {
+		setCreateNewTodos(target.value)
+	}
 
 	return (
 		<div className={styles.toDoList}>
-			<div className={styles.header}>Список дел:</div>
+			<div className={styles.actionsContainer}>
+				<AddToDo
+					onSubmit={onSubmit}
+					isCreating={isCreating}
+					value={newTodos}
+					onChange={onNewTodosChange}
+				/>
+				<SearchToDo
+					value={searchQuery}
+					onChange={e => setSearchQuery(e.target.value)}
+				/>
+				<button
+					onClick={() => setIsSorted(!isSorted)}
+					className={styles.sortButton}
+				>
+					{isSorted ? (
+						<i className='fas fa-sort-alpha-down'></i>
+					) : (
+						<i className='fas fa-sort'></i>
+					)}
+				</button>
+			</div>
+			<div className={styles.header}>Задачи:</div>
+			<hr />
 			{isLoading ? (
 				<div className={styles.loader}></div>
+			) : todos.length === 0 ? (
+				<div className={styles.emptyListText}>Список задач пуст</div>
 			) : (
-				todos.map(({ id, title }) => (
-					<ToDo key={id} className={styles.todo} id={id} title={title} />
-				))
+				todos
+					.filter(({ title }) =>
+						title.toLowerCase().includes(searchQuery.toLowerCase())
+					)
+					.sort((a, b) => (isSorted ? a.title.localeCompare(b.title) : 0))
+					.map(({ id, title }) => (
+						<ToDo
+							key={id}
+							id={id}
+							title={title}
+							isDeleting={isDeleting}
+							requestDeleteTodos={requestDeleteTodos}
+							isUpdating={isUpdating}
+							requestUpdateTodos={requestUpdateTodos}
+						/>
+					))
 			)}
+
+			<hr />
 		</div>
 	)
 }
