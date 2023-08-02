@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import styles from './Todos.module.css'
+import Button from './Button'
+import Input from './Input'
+import Form from './Form'
 
 const ToDo = ({
 	id,
@@ -42,42 +45,42 @@ const ToDo = ({
 		<div className={styles.toDoItem} id={id}>
 			<div className={styles.toDoContent}>
 				{editedValue !== '' ? (
-					<form onSubmit={onSubmit}>
-						<input
+					<Form onSubmit={onSubmit}>
+						<Input
 							name='taskName'
 							type='text'
 							placeholder='Измените задачу'
 							value={editedValue}
 							onChange={onTodosChange}
 						/>
-						<button
+						<Button
 							disabled={isUpdating}
 							type='submit'
-							className={styles.createButton}
+							style={styles.createButton}
 						>
 							<i className='fas fa-save'></i>
-						</button>
-					</form>
+						</Button>
+					</Form>
 				) : (
 					<span>{title}</span>
 				)}
 			</div>
 
 			<div className={styles.buttonContainer}>
-				<button
+				<Button
 					disabled={isUpdating}
 					onClick={handleUpdate}
-					className={styles.editButton}
+					style={styles.editButton}
 				>
 					<i className='fas fa-pencil-alt'></i>
-				</button>
-				<button
+				</Button>
+				<Button
 					disabled={isDeleting}
 					onClick={handleDelete}
-					className={styles.deleteButton}
+					style={styles.deleteButton}
 				>
 					<i className='fas fa-trash'></i>
-				</button>
+				</Button>
 			</div>
 		</div>
 	)

@@ -1,79 +1,73 @@
 import React, { useEffect, useState } from 'react'
-export const useRequestGetTodos = refreshTodos => {
-	const [todos, setTodos] = useState([])
+import { ref, onValue, push, update, remove } from 'firebase/database'
+import { db } from '../src/firebase'
 
-	const [isLoading, setIsLoading] = useState(false)
+export const useRequestGetTodos = () => {
+	const [todos, setTodos] = useState({})
+
+	const [isLoading, setIsLoading] = useState(true)
+
+	const todosDbRef = ref(db, 'todos')
+
 	useEffect(() => {
-		setIsLoading(true)
+		return onValue(todosDbRef, snapshot => {
+			const loadedTodos = snapshot.val() || {}
 
-		setTimeout(() => {
-			fetch('http://localhost:3001/todos')
-				.then(loadedData => loadedData.json())
-				.then(loadedTodos => {
-					setTodos(loadedTodos)
-				})
-				.finally(() => setIsLoading(false))
-		}, 2000)
-	}, [refreshTodos])
+			setTodos(loadedTodos)
+			setIsLoading(false)
+		})
+	}, [])
 	return { todos, isLoading }
 }
 
-export const useRequestAddTodos = (refreshTodos, setRefreshTodos) => {
+export const useRequestAddTodos = () => {
 	const [isCreating, setIsCreating] = useState(false)
 
 	const requestAddTodos = title => {
 		setIsCreating(true)
 
-		fetch('http://localhost:3001/todos', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			body: JSON.stringify({
-				title,
-			}),
+		const todosDbRef = ref(db, 'todos')
+
+		push(todosDbRef, {
+			title: title,
 		})
-			.then(rawResponse => rawResponse.json())
 			.then(response => {
 				console.log('Задача добавлена, ответ сервера:', response)
-				setRefreshTodos(!refreshTodos)
 			})
 			.finally(() => setIsCreating(false))
 	}
 	return { requestAddTodos, isCreating }
 }
-export const useRequestDeleteTodos = (refreshTodos, setRefreshTodos) => {
+export const useRequestDeleteTodos = () => {
 	const [isDeleting, setIsDeleting] = useState(false)
 
 	const requestDeleteTodos = id => {
 		setIsDeleting(true)
 
-		fetch(`http://localhost:3001/todos/${id}`, {
-			method: 'DELETE',
-		})
-			.then(rawResponse => rawResponse.json())
+		const todosDbRef = ref(db, `todos/${id}`)
+
+		remove(todosDbRef)
 			.then(response => {
 				console.log('Задача удалена, ответ сервера: ', response)
-				setRefreshTodos(!refreshTodos)
 			})
 			.finally(() => setIsDeleting(false))
 	}
 	return { requestDeleteTodos, isDeleting }
 }
 
-export const useRequestUpdateTodos = (refreshTodos, setRefreshTodos) => {
+export const useRequestUpdateTodos = () => {
 	const [isUpdating, setIsUpdating] = useState(false)
 
-	const requestUpdateTodos = (title,id) => {
+	const requestUpdateTodos = (title, id) => {
 		setIsUpdating(true)
 
-		fetch(`http://localhost:3001/todos/${id}`, {
-			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json;charset=utf-8' },
-			body: JSON.stringify({ title }),
+		const todosDbRef = ref(db, `todos/${id}`)
+
+		update(todosDbRef, {
+			title: title,
 		})
-			.then(rawResponse => rawResponse.json())
 			.then(response => {
 				console.log('Задача обновлена, ответ сервера:', response)
-				setRefreshTodos(!refreshTodos)
 			})
 			.finally(() => setIsUpdating(false))
 	}

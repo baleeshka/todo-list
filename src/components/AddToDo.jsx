@@ -1,24 +1,27 @@
 import React from 'react'
 import styles from './Todos.module.css'
+import Button from './Button'
+import Input from './Input'
+import Form from './Form'
 const AddToDo = ({ isCreating, onSubmit, onChange, value }) => {
 	return (
 		<div>
-			<form onSubmit={onSubmit}>
-				<input
+			<Form onSubmit={onSubmit}>
+				<Input
 					name='taskName'
 					type='text'
 					placeholder='Создайте новую задачу'
 					value={value}
 					onChange={onChange}
 				/>
-				<button
+				<Button
 					disabled={isCreating}
-					type='submit'
-					className={styles.createButton}
+					onClick={onSubmit}
+					style={styles.createButton}
 				>
 					Создать
-				</button>
-			</form>
+				</Button>
+			</Form>
 		</div>
 	)
 }

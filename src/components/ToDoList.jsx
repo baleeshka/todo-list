@@ -9,6 +9,7 @@ import {
 	useRequestUpdateTodos,
 } from '../hooks.js'
 import SearchToDo from './SearchTodo'
+import Button from './Button'
 
 const ToDoList = () => {
 	const [refreshTodos, setRefreshTodos] = useState(false)
@@ -16,7 +17,7 @@ const ToDoList = () => {
 	const [searchQuery, setSearchQuery] = useState('')
 	const [isSorted, setIsSorted] = useState(false)
 
-	const { todos, isLoading } = useRequestGetTodos(refreshTodos)
+	const { todos, isLoading } = useRequestGetTodos()
 
 	const { requestAddTodos, isCreating } = useRequestAddTodos(
 		refreshTodos,
@@ -65,30 +66,32 @@ const ToDoList = () => {
 					value={searchQuery}
 					onChange={e => setSearchQuery(e.target.value)}
 				/>
-				<button
+				<Button
 					onClick={() => setIsSorted(!isSorted)}
-					className={styles.sortButton}
+					style={styles.sortButton}
 				>
 					{isSorted ? (
 						<i className='fas fa-sort-alpha-down'></i>
 					) : (
 						<i className='fas fa-sort'></i>
 					)}
-				</button>
+				</Button>
 			</div>
 			<div className={styles.header}>Задачи:</div>
 			<hr />
 			{isLoading ? (
 				<div className={styles.loader}></div>
-			) : todos.length === 0 ? (
+			) : Object.entries(todos).length === 0 ? (
 				<div className={styles.emptyListText}>Список задач пуст</div>
 			) : (
-				todos
-					.filter(({ title }) =>
+				Object.entries(todos)
+					.filter(([, { title }]) =>
 						title.toLowerCase().includes(searchQuery.toLowerCase())
 					)
-					.sort((a, b) => (isSorted ? a.title.localeCompare(b.title) : 0))
-					.map(({ id, title }) => (
+					.sort(([, a], [, b]) =>
+						isSorted ? a.title.localeCompare(b.title) : 0
+					)
+					.map(([id, { title }]) => (
 						<ToDo
 							key={id}
 							id={id}

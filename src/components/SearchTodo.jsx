@@ -1,8 +1,9 @@
 import React from 'react'
+import Input from './Input'
 const SearchToDo = ({ ...props }) => {
 	return (
 		<div>
-			<input type='text' placeholder='Поиск задачи' {...props} />
+			<Input type='text' placeholder='Поиск задачи' {...props} />
 		</div>
 	)
 }
