@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
-import AddToDo from './AddToDo'
-import ToDo from './ToDo'
-import styles from './Todos.module.css'
 import {
-	useRequestGetTodos,
 	useRequestAddTodos,
 	useRequestDeleteTodos,
+	useRequestGetTodos,
 	useRequestUpdateTodos,
 } from '../hooks.js'
+import AddToDo from './AddToDo'
+import Button from './Button'
 import SearchToDo from './SearchTodo'
+import ToDo from './ToDo'
+import styles from './Todos.module.css'
 
 const ToDoList = () => {
 	const [refreshTodos, setRefreshTodos] = useState(false)
@@ -65,16 +66,16 @@ const ToDoList = () => {
 					value={searchQuery}
 					onChange={e => setSearchQuery(e.target.value)}
 				/>
-				<button
+				<Button
 					onClick={() => setIsSorted(!isSorted)}
-					className={styles.sortButton}
+					style={styles.sortButton}
 				>
 					{isSorted ? (
 						<i className='fas fa-sort-alpha-down'></i>
 					) : (
 						<i className='fas fa-sort'></i>
 					)}
-				</button>
+				</Button>
 			</div>
 			<div className={styles.header}>Задачи:</div>
 			<hr />
