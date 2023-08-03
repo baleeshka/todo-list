@@ -5,7 +5,6 @@ import ToDoList from './components/ToDoList'
 function App() {
 	return (
 		<div>
-			<ToDoList />
 			<Routes>
 				<Route path='/' element={<ToDoList />} />
 				<Route path='todos/:id' element={<ToDo />} />

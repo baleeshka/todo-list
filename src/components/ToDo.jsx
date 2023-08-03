@@ -1,18 +1,22 @@
 import React, { useState } from 'react'
+import { useRequestDeleteTodos, useRequestUpdateTodos } from '../hooks.js'
 import Button from './Button'
 import Form from './Form'
 import Input from './Input'
 import styles from './Todos.module.css'
 
-const ToDo = ({
-	id,
-	title,
-	isDeleting,
-	requestDeleteTodos,
-	isUpdating,
-	requestUpdateTodos,
-}) => {
+const ToDo = ({ id, title }) => {
 	const [editedValue, setEditedValue] = useState('')
+
+	const { requestDeleteTodos, isDeleting } = useRequestDeleteTodos(
+		refreshTodos,
+		setRefreshTodos
+	)
+
+	const { requestUpdateTodos, isUpdating } = useRequestUpdateTodos(
+		refreshTodos,
+		setRefreshTodos
+	)
 
 	const onTodosChange = ({ target }) => {
 		setEditedValue(target.value)
@@ -42,8 +46,8 @@ const ToDo = ({
 	}
 
 	return (
-		<div className={styles.toDoItem} id={id}>
-			<div className={styles.toDoContent}>
+		<>
+			<div>
 				{editedValue !== '' ? (
 					<Form onSubmit={onSubmit}>
 						<Input
@@ -54,7 +58,7 @@ const ToDo = ({
 							onChange={onTodosChange}
 						/>
 						<Button
-							disabled={isUpdating}
+							isUpdating={isUpdating}
 							type='submit'
 							style={styles.createButton}
 						>
@@ -68,21 +72,21 @@ const ToDo = ({
 
 			<div className={styles.buttonContainer}>
 				<Button
-					disabled={isUpdating}
+					isUpdating={isUpdating}
 					onClick={handleUpdate}
 					style={styles.editButton}
 				>
 					<i className='fas fa-pencil-alt'></i>
 				</Button>
 				<Button
-					disabled={isDeleting}
+					isDeleting={isDeleting}
 					onClick={handleDelete}
 					style={styles.deleteButton}
 				>
 					<i className='fas fa-trash'></i>
 				</Button>
 			</div>
-		</div>
+		</>
 	)
 }
 
