@@ -8,7 +8,7 @@ import {
 import AddToDo from './AddToDo'
 import Button from './Button'
 import SearchToDo from './SearchTodo'
-import ToDo from './ToDo'
+import ToDoTitle from './ToDoTitle.jsx'
 import styles from './Todos.module.css'
 
 const ToDoList = () => {
@@ -89,17 +89,7 @@ const ToDoList = () => {
 						title.toLowerCase().includes(searchQuery.toLowerCase())
 					)
 					.sort((a, b) => (isSorted ? a.title.localeCompare(b.title) : 0))
-					.map(({ id, title }) => (
-						<ToDo
-							key={id}
-							id={id}
-							title={title}
-							isDeleting={isDeleting}
-							requestDeleteTodos={requestDeleteTodos}
-							isUpdating={isUpdating}
-							requestUpdateTodos={requestUpdateTodos}
-						/>
-					))
+					.map(({ id, title }) => <ToDoTitle id={id} key={id} title={title} />)
 			)}
 
 			<hr />
