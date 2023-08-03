@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
-import AddToDo from './AddToDo'
-import ToDo from './ToDo'
-import styles from './Todos.module.css'
 import {
-	useRequestGetTodos,
 	useRequestAddTodos,
 	useRequestDeleteTodos,
+	useRequestGetTodos,
 	useRequestUpdateTodos,
 } from '../hooks.js'
-import SearchToDo from './SearchTodo'
+import AddToDo from './AddToDo'
 import Button from './Button'
+import SearchToDo from './SearchTodo'
+import ToDo from './ToDo'
+import styles from './Todos.module.css'
 
 const ToDoList = () => {
 	const [refreshTodos, setRefreshTodos] = useState(false)
