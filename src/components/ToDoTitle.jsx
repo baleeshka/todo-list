@@ -4,9 +4,11 @@ import styles from './Todos.module.css'
 
 const ToDoTitle = ({ id, title }) => {
 	return (
-		<Link to={`todos/${id}`} className={styles.link} id={id}>
-			{title}
-		</Link>
+		<div className={styles.toDoItem}>
+			<Link to={`todos/${id}`} className={styles.link} id={id}>
+				{title}
+			</Link>
+		</div>
 	)
 }
 

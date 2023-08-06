@@ -8,7 +8,7 @@ import {
 import AddToDo from './AddToDo'
 import Button from './Button'
 import SearchToDo from './SearchTodo'
-import ToDoTitle from './ToDoTitle.jsx'
+import TaskList from './TaskList.jsx'
 import styles from './Todos.module.css'
 
 const ToDoList = () => {
@@ -79,18 +79,15 @@ const ToDoList = () => {
 			</div>
 			<div className={styles.header}>Задачи:</div>
 			<hr />
-			{isLoading ? (
-				<div className={styles.loader}></div>
-			) : todos.length === 0 ? (
-				<div className={styles.emptyListText}>Список задач пуст</div>
-			) : (
-				todos
-					.filter(({ title }) =>
-						title.toLowerCase().includes(searchQuery.toLowerCase())
-					)
-					.sort((a, b) => (isSorted ? a.title.localeCompare(b.title) : 0))
-					.map(({ id, title }) => <ToDoTitle id={id} key={id} title={title} />)
-			)}
+			<TaskList
+				todos={todos}
+				searchQuery={searchQuery}
+				isSorted={isSorted}
+				isDeleting={isDeleting}
+				requestDeleteTodos={requestDeleteTodos}
+				isUpdating={isUpdating}
+				requestUpdateTodos={requestUpdateTodos}
+			/>
 
 			<hr />
 		</div>
