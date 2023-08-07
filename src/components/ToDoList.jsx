@@ -1,8 +1,15 @@
 import React, { useState } from 'react'
-import { useRequestAddTodos, useRequestGetTodos } from '../hooks.js'
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
+import {
+	useRequestAddTodos,
+	useRequestDeleteTodos,
+	useRequestGetTodos,
+	useRequestUpdateTodos,
+} from '../hooks.js'
 import AddToDo from './AddToDo'
 import Button from './Button'
 import SearchToDo from './SearchTodo'
+import ToDo from './ToDo.jsx'
 import styles from './Todos.module.css'
 
 const ToDoList = () => {
@@ -14,6 +21,16 @@ const ToDoList = () => {
 	const { todos, isLoading } = useRequestGetTodos(refreshTodos)
 
 	const { requestAddTodos, isCreating } = useRequestAddTodos(
+		refreshTodos,
+		setRefreshTodos
+	)
+
+	const { requestDeleteTodos, isDeleting } = useRequestDeleteTodos(
+		refreshTodos,
+		setRefreshTodos
+	)
+
+	const { requestUpdateTodos, isUpdating } = useRequestUpdateTodos(
 		refreshTodos,
 		setRefreshTodos
 	)
@@ -38,43 +55,58 @@ const ToDoList = () => {
 	}
 
 	return (
-		<div className={styles.toDoList}>
-			<div className={styles.actionsContainer}>
-				<AddToDo
-					onSubmit={onSubmit}
-					isCreating={isCreating}
-					value={newTodos}
-					onChange={onNewTodosChange}
-				/>
-				<SearchToDo
-					value={searchQuery}
-					onChange={e => setSearchQuery(e.target.value)}
-				/>
-				<Button
-					onClick={() => setIsSorted(!isSorted)}
-					style={styles.sortButton}
-				>
-					{isSorted ? (
-						<i className='fas fa-sort-alpha-down'></i>
-					) : (
-						<i className='fas fa-sort'></i>
-					)}
-				</Button>
+		<Router>
+			<div className={styles.toDoList}>
+				<div className={styles.actionsContainer}>
+					<AddToDo
+						onSubmit={onSubmit}
+						isCreating={isCreating}
+						value={newTodos}
+						onChange={onNewTodosChange}
+					/>
+					<SearchToDo
+						value={searchQuery}
+						onChange={e => setSearchQuery(e.target.value)}
+					/>
+					<Button
+						onClick={() => setIsSorted(!isSorted)}
+						style={styles.sortButton}
+					>
+						{isSorted ? (
+							<i className='fas fa-sort-alpha-down'></i>
+						) : (
+							<i className='fas fa-sort'></i>
+						)}
+					</Button>
+				</div>
+				<div className={styles.header}>Задачи:</div>
+				<hr />
+				<Switch>
+					<Route
+						path='/task/:id'
+						render={props => (
+							<ToDo
+								{...props}
+								todos={todos}
+								refreshTodos={refreshTodos}
+								setRefreshTodos={setRefreshTodos}
+							/>
+						)}
+					/>
+					<Route
+						path='/'
+						render={() => (
+							<TaskList
+								todos={todos}
+								searchQuery={searchQuery}
+								isSorted={isSorted}
+							/>
+						)}
+					/>
+				</Switch>
+				<hr />
 			</div>
-			<div className={styles.header}>Задачи:</div>
-			<hr />
-			<TaskList
-				todos={todos}
-				searchQuery={searchQuery}
-				isSorted={isSorted}
-				isDeleting={isDeleting}
-				requestDeleteTodos={requestDeleteTodos}
-				isUpdating={isUpdating}
-				requestUpdateTodos={requestUpdateTodos}
-			/>
-
-			<hr />
-		</div>
+		</Router>
 	)
 }
 
