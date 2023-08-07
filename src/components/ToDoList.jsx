@@ -1,14 +1,8 @@
 import React, { useState } from 'react'
-import {
-	useRequestAddTodos,
-	useRequestDeleteTodos,
-	useRequestGetTodos,
-	useRequestUpdateTodos,
-} from '../hooks.js'
+import { useRequestAddTodos, useRequestGetTodos } from '../hooks.js'
 import AddToDo from './AddToDo'
 import Button from './Button'
 import SearchToDo from './SearchTodo'
-import TaskList from './TaskList.jsx'
 import styles from './Todos.module.css'
 
 const ToDoList = () => {
@@ -20,16 +14,6 @@ const ToDoList = () => {
 	const { todos, isLoading } = useRequestGetTodos(refreshTodos)
 
 	const { requestAddTodos, isCreating } = useRequestAddTodos(
-		refreshTodos,
-		setRefreshTodos
-	)
-
-	const { requestDeleteTodos, isDeleting } = useRequestDeleteTodos(
-		refreshTodos,
-		setRefreshTodos
-	)
-
-	const { requestUpdateTodos, isUpdating } = useRequestUpdateTodos(
 		refreshTodos,
 		setRefreshTodos
 	)
