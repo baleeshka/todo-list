@@ -70,7 +70,7 @@ const TodoPage = ({ refreshTodos, setRefreshTodos }) => {
 							onChange={onTodosChange}
 						/>
 						<Button type='submit' style={styles.createButton}>
-							Save
+							<i className='fas fa-save'></i>
 						</Button>
 					</Form>
 				) : (
