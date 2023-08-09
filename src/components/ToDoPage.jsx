@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useRequestDeleteTodos, useRequestUpdateTodos } from '../hooks.js'
 import Button from './Button'
 import Form from './Form'
 import Input from './Input'
 import styles from './Todos.module.css'
 
-const TodoPage = ({ todos, refreshTodos, setRefreshTodos }) => {
+const TodoPage = ({ refreshTodos, setRefreshTodos }) => {
 	const { id } = useParams()
 	const navigate = useNavigate()
+	const location = useLocation()
+	const titleFromProps = location.state && location.state.title
 
-	const [editedValue, setEditedValue] = useState('')
-	const [currentTodo, setCurrentTodo] = useState(null)
+	const [editedValue, setEditedValue] = useState(titleFromProps || '')
+	const [isEditing, setIsEditing] = useState(false)
+	const [currentTitle, setCurrentTitle] = useState(titleFromProps || '')
 
 	const { requestDeleteTodos } = useRequestDeleteTodos(
 		refreshTodos,
@@ -21,11 +24,6 @@ const TodoPage = ({ todos, refreshTodos, setRefreshTodos }) => {
 		refreshTodos,
 		setRefreshTodos
 	)
-
-	useEffect(() => {
-		const todo = todos.find(todo => todo.id === id)
-		setCurrentTodo(todo)
-	}, [id, todos])
 
 	const onTodosChange = ({ target }) => {
 		setEditedValue(target.value)
@@ -39,6 +37,8 @@ const TodoPage = ({ todos, refreshTodos, setRefreshTodos }) => {
 		}
 
 		sendFormData(editedValue)
+		setIsEditing(false)
+		setCurrentTitle(editedValue)
 	}
 
 	const sendFormData = formData => {
@@ -52,17 +52,15 @@ const TodoPage = ({ todos, refreshTodos, setRefreshTodos }) => {
 	}
 
 	const handleUpdate = () => {
-		setEditedValue(currentTodo.title)
+		setIsEditing(true)
 	}
 
-	if (!currentTodo) {
-		return <div>Loading...</div>
-	}
+	const titleToShow = isEditing ? editedValue : currentTitle
 
 	return (
 		<>
 			<div>
-				{editedValue !== '' ? (
+				{isEditing ? (
 					<Form onSubmit={onSubmit}>
 						<Input
 							name='taskName'
@@ -76,14 +74,16 @@ const TodoPage = ({ todos, refreshTodos, setRefreshTodos }) => {
 						</Button>
 					</Form>
 				) : (
-					<span>{currentTodo.title}</span>
+					<span>{titleToShow}</span>
 				)}
 			</div>
 
 			<div className={styles.buttonContainer}>
-				<Button onClick={handleUpdate} style={styles.editButton}>
-					Edit
-				</Button>
+				{isEditing ? null : (
+					<Button onClick={handleUpdate} style={styles.editButton}>
+						Edit
+					</Button>
+				)}
 				<Button onClick={handleDelete} style={styles.deleteButton}>
 					Delete
 				</Button>
