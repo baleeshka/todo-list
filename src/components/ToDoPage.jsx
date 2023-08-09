@@ -81,11 +81,11 @@ const TodoPage = ({ refreshTodos, setRefreshTodos }) => {
 			<div className={styles.buttonContainer}>
 				{isEditing ? null : (
 					<Button onClick={handleUpdate} style={styles.editButton}>
-						Edit
+						<i className='fas fa-pencil-alt'></i>
 					</Button>
 				)}
 				<Button onClick={handleDelete} style={styles.deleteButton}>
-					Delete
+					<i className='fas fa-trash'></i>
 				</Button>
 			</div>
 		</>
