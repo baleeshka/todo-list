@@ -1,21 +1,17 @@
 import React, { useState } from 'react'
-import { Route, Routes } from 'react-router-dom'
 import { useRequestAddTodos, useRequestGetTodos } from '../hooks.js'
 import AddToDo from './AddToDo'
 import Button from './Button'
 import SearchToDo from './SearchTodo'
 import TaskList from './TaskList'
-import ToDoPage from './ToDoPage.jsx'
 import styles from './Todos.module.css'
 
-const ToDoList = () => {
-	const [refreshTodos, setRefreshTodos] = useState(false)
+const ToDoList = ({ refreshTodos, setRefreshTodos }) => {
 	const [newTodos, setCreateNewTodos] = useState('')
 	const [searchQuery, setSearchQuery] = useState('')
 	const [isSorted, setIsSorted] = useState(false)
 
 	const { todos, isLoading } = useRequestGetTodos(refreshTodos)
-
 	const { requestAddTodos, isCreating } = useRequestAddTodos(
 		refreshTodos,
 		setRefreshTodos
@@ -66,28 +62,12 @@ const ToDoList = () => {
 			</div>
 			<div className={styles.header}>Задачи:</div>
 			<hr />
-			<Routes>
-				<Route
-					path='/task/:id'
-					element={
-						<ToDoPage
-							refreshTodos={refreshTodos}
-							setRefreshTodos={setRefreshTodos}
-						/>
-					}
-				/>
-				<Route
-					path='/'
-					element={
-						<TaskList
-							isLoading={isLoading}
-							todos={todos}
-							searchQuery={searchQuery}
-							isSorted={isSorted}
-						/>
-					}
-				/>
-			</Routes>
+			<TaskList
+				isLoading={isLoading}
+				todos={todos}
+				searchQuery={searchQuery}
+				isSorted={isSorted}
+			/>
 			<hr />
 		</div>
 	)
