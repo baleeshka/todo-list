@@ -58,8 +58,8 @@ const TodoPage = ({ refreshTodos, setRefreshTodos }) => {
 	const titleToShow = isEditing ? editedValue : currentTitle
 
 	return (
-		<>
-			<div>
+		<div className={styles.toDoItem}>
+			<div className={styles.toDoContent}>
 				{isEditing ? (
 					<Form onSubmit={onSubmit}>
 						<Input
@@ -88,7 +88,7 @@ const TodoPage = ({ refreshTodos, setRefreshTodos }) => {
 					<i className='fas fa-trash'></i>
 				</Button>
 			</div>
-		</>
+		</div>
 	)
 }
 
