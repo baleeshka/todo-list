@@ -2,16 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styles from './Todos.module.css'
 
-const TaskList = ({
-	todos,
-	searchQuery,
-	isSorted,
-	isLoading,
-	isDeleting,
-	requestDeleteTodos,
-	isUpdating,
-	requestUpdateTodos,
-}) => {
+const TaskList = ({ todos, searchQuery, isSorted, isLoading }) => {
 	const filteredAndSortedTodos = todos
 		.filter(({ title }) =>
 			title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -26,7 +17,7 @@ const TaskList = ({
 			) : (
 				filteredAndSortedTodos.map(({ id, title }) => (
 					<div className={styles.toDoItem}>
-						<Link key={id} to={`todos/${id}`} className={styles.link} id={id}>
+						<Link key={id} to={`/task/${id}`} className={styles.link} id={id}>
 							{title}
 						</Link>
 					</div>

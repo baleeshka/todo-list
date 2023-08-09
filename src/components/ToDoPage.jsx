@@ -1,22 +1,31 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useRequestDeleteTodos, useRequestUpdateTodos } from '../hooks.js'
 import Button from './Button'
 import Form from './Form'
 import Input from './Input'
 import styles from './Todos.module.css'
 
-const ToDo = ({ id, title }) => {
+const TodoPage = ({ todos, refreshTodos, setRefreshTodos }) => {
+	const { id } = useParams()
+	const navigate = useNavigate()
+
 	const [editedValue, setEditedValue] = useState('')
+	const [currentTodo, setCurrentTodo] = useState(null)
 
-	const { requestDeleteTodos, isDeleting } = useRequestDeleteTodos(
+	const { requestDeleteTodos } = useRequestDeleteTodos(
+		refreshTodos,
+		setRefreshTodos
+	)
+	const { requestUpdateTodos } = useRequestUpdateTodos(
 		refreshTodos,
 		setRefreshTodos
 	)
 
-	const { requestUpdateTodos, isUpdating } = useRequestUpdateTodos(
-		refreshTodos,
-		setRefreshTodos
-	)
+	useEffect(() => {
+		const todo = todos.find(todo => todo.id === id)
+		setCurrentTodo(todo)
+	}, [id, todos])
 
 	const onTodosChange = ({ target }) => {
 		setEditedValue(target.value)
@@ -39,10 +48,15 @@ const ToDo = ({ id, title }) => {
 
 	const handleDelete = () => {
 		requestDeleteTodos(id)
+		navigate('/')
 	}
 
 	const handleUpdate = () => {
-		setEditedValue(title)
+		setEditedValue(currentTodo.title)
+	}
+
+	if (!currentTodo) {
+		return <div>Loading...</div>
 	}
 
 	return (
@@ -57,37 +71,25 @@ const ToDo = ({ id, title }) => {
 							value={editedValue}
 							onChange={onTodosChange}
 						/>
-						<Button
-							isUpdating={isUpdating}
-							type='submit'
-							style={styles.createButton}
-						>
-							<i className='fas fa-save'></i>
+						<Button type='submit' style={styles.createButton}>
+							Save
 						</Button>
 					</Form>
 				) : (
-					<span>{title}</span>
+					<span>{currentTodo.title}</span>
 				)}
 			</div>
 
 			<div className={styles.buttonContainer}>
-				<Button
-					isUpdating={isUpdating}
-					onClick={handleUpdate}
-					style={styles.editButton}
-				>
-					<i className='fas fa-pencil-alt'></i>
+				<Button onClick={handleUpdate} style={styles.editButton}>
+					Edit
 				</Button>
-				<Button
-					isDeleting={isDeleting}
-					onClick={handleDelete}
-					style={styles.deleteButton}
-				>
-					<i className='fas fa-trash'></i>
+				<Button onClick={handleDelete} style={styles.deleteButton}>
+					Delete
 				</Button>
 			</div>
 		</>
 	)
 }
 
-export default ToDo
+export default TodoPage
