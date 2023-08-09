@@ -22,7 +22,7 @@ const TaskList = ({ todos, searchQuery, isSorted, isLoading }) => {
 							state={{ title: title }}
 							className={styles.link}
 						>
-							{title}
+							{title.length > 70 ? title.substring(0, 70) + '...' : title}
 						</Link>
 					</div>
 				))

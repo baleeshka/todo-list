@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useRequestDeleteTodos, useRequestUpdateTodos } from '../hooks.js'
 import Button from './Button'
@@ -55,38 +55,56 @@ const TodoPage = ({ refreshTodos, setRefreshTodos }) => {
 		setIsEditing(true)
 	}
 
+	const handleBack = () => {
+		navigate('/')
+	}
+
+	useEffect(() => {
+		if (titleFromProps === null || titleFromProps === '') {
+			navigate('/404')
+		}
+	}, [titleFromProps, navigate])
+
 	const titleToShow = isEditing ? editedValue : currentTitle
 
 	return (
-		<div className={styles.toDoItem}>
-			<div className={styles.toDoContent}>
-				{isEditing ? (
-					<Form onSubmit={onSubmit}>
-						<Input
-							name='taskName'
-							type='text'
-							placeholder='Измените задачу'
-							value={editedValue}
-							onChange={onTodosChange}
-						/>
-						<Button type='submit' style={styles.createButton}>
-							<i className='fas fa-save'></i>
-						</Button>
-					</Form>
-				) : (
-					<span>{titleToShow}</span>
-				)}
+		<div className={styles.toDoList}>
+			<div className={styles.actionsContainer}>
+				<Button onClick={handleBack} style={styles.deleteButton}>
+					<i className='fas fa-arrow-left'></i>
+				</Button>
 			</div>
 
-			<div className={styles.buttonContainer}>
-				{isEditing ? null : (
-					<Button onClick={handleUpdate} style={styles.editButton}>
-						<i className='fas fa-pencil-alt'></i>
+			<div className={styles.toDoItem}>
+				<div className={styles.toDoContent}>
+					{isEditing ? (
+						<Form onSubmit={onSubmit}>
+							<Input
+								name='taskName'
+								type='text'
+								placeholder='Измените задачу'
+								value={editedValue}
+								onChange={onTodosChange}
+							/>
+							<Button type='submit' style={styles.createButton}>
+								<i className='fas fa-save'></i>
+							</Button>
+						</Form>
+					) : (
+						<span>{titleToShow}</span>
+					)}
+				</div>
+
+				<div className={styles.buttonContainer}>
+					{isEditing ? null : (
+						<Button onClick={handleUpdate} style={styles.editButton}>
+							<i className='fas fa-pencil-alt'></i>
+						</Button>
+					)}
+					<Button onClick={handleDelete} style={styles.deleteButton}>
+						<i className='fas fa-trash'></i>
 					</Button>
-				)}
-				<Button onClick={handleDelete} style={styles.deleteButton}>
-					<i className='fas fa-trash'></i>
-				</Button>
+				</div>
 			</div>
 		</div>
 	)
