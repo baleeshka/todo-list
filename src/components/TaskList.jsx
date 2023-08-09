@@ -16,8 +16,12 @@ const TaskList = ({ todos, searchQuery, isSorted, isLoading }) => {
 				<div className={styles.emptyListText}>Список задач пуст</div>
 			) : (
 				filteredAndSortedTodos.map(({ id, title }) => (
-					<div className={styles.toDoItem}>
-						<Link key={id} to={`/task/${id}`} className={styles.link} id={id}>
+					<div className={styles.toDoItem} key={id}>
+						<Link
+							to={`/task/${id}`}
+							state={{ title: title }}
+							className={styles.link}
+						>
 							{title}
 						</Link>
 					</div>

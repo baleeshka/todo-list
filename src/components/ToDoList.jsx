@@ -71,7 +71,6 @@ const ToDoList = () => {
 					path='/task/:id'
 					element={
 						<ToDoPage
-							todos={todos}
 							refreshTodos={refreshTodos}
 							setRefreshTodos={setRefreshTodos}
 						/>
@@ -81,6 +80,7 @@ const ToDoList = () => {
 					path='/'
 					element={
 						<TaskList
+							isLoading={isLoading}
 							todos={todos}
 							searchQuery={searchQuery}
 							isSorted={isSorted}
